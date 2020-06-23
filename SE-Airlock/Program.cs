@@ -33,6 +33,7 @@ namespace IngameScript
         List<IMyButtonPanel> ButtonList;
 
         IMyReflectorLight SpinningLight;
+        IMyAirVent Vent;
 
         public Program()
         {
@@ -51,29 +52,53 @@ namespace IngameScript
             Buttons.GetBlocksOfType(ButtonList);
 
             SpinningLight = GridTerminalSystem.GetBlockWithName("Airlock Rotating Light") as IMyReflectorLight;
+            Vent = GridTerminalSystem.GetBlockWithName("Airlock Vent") as IMyAirVent;
         }
 
         public void Save()
         {
-            // Called when the program needs to save its state. Use
-            // this method to save your state to the Storage field
-            // or some other means. 
-            // 
-            // This method is optional and can be removed if not
-            // needed.
+
         }
 
         public void Main(string argument, UpdateType updateSource)
         {
-            // The main entry point of the script, invoked every time
-            // one of the programmable block's Run actions are invoked,
-            // or the script updates itself. The updateSource argument
-            // describes where the update came from. Be aware that the
-            // updateSource is a  bitfield  and might contain more than 
-            // one update type.
-            // 
-            // The method itself is required, but the arguments above
-            // can be removed if not needed.
+            if (!AreDoorsShut())
+            {
+                CycleDoors();
+            }
+        }
+        public bool AreDoorsShut()
+        {
+            foreach (var door in DoorList)
+            {
+                if (door.Status != DoorStatus.Closed)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public void CycleDoors()
+        {
+            foreach (var door in DoorList)
+            {
+                if (door.Status == DoorStatus.Open || door.Status == DoorStatus.Opening)
+                {
+                    door.CloseDoor();
+                }
+            }
+        }
+
+        public bool IsAirlockPressurized()
+        {
+            if (Vent.CanPressurize && Vent.GetOxygenLevel() < 0.0f)
+            {
+                return true;
+            }
+
+            return false;
         }
     }
 }
