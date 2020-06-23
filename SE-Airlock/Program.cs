@@ -23,34 +23,34 @@ namespace IngameScript
 {
     partial class Program : MyGridProgram
     {
-        Color red = new Color(255, 0, 0);
-        Color green = new Color(0, 255, 0);
+        Color Red = new Color(255, 0, 0);
+        Color Green = new Color(0, 255, 0);
 
-        List<IMyInteriorLight> lightList;
-        List<IMyDoor> doorList;
-        List<IMySensorBlock> sensorList;
-        List<IMyTextPanel> screenList;
-        List<IMyButtonPanel> buttonList;
+        List<IMyInteriorLight> LightList;
+        List<IMyDoor> DoorList;
+        List<IMySensorBlock> SensorList;
+        List<IMyTextPanel> ScreenList;
+        List<IMyButtonPanel> ButtonList;
 
-        IMyReflectorLight spinningLight;
+        IMyReflectorLight SpinningLight;
 
         public Program()
         {
             Runtime.UpdateFrequency = UpdateFrequency.Update10;
 
-            IMyBlockGroup lights = GridTerminalSystem.GetBlockGroupWithName("Airlock Lights");
-            IMyBlockGroup doors = GridTerminalSystem.GetBlockGroupWithName("Airlock Doors");
-            IMyBlockGroup sensors = GridTerminalSystem.GetBlockGroupWithName("Airlock Sensors");
-            IMyBlockGroup screens = GridTerminalSystem.GetBlockGroupWithName("Airlock Screens");
-            IMyBlockGroup buttons = GridTerminalSystem.GetBlockGroupWithName("Airlock Buttons");
+            IMyBlockGroup Lights = GridTerminalSystem.GetBlockGroupWithName("Airlock Lights");
+            IMyBlockGroup Doors = GridTerminalSystem.GetBlockGroupWithName("Airlock Doors");
+            IMyBlockGroup Sensors = GridTerminalSystem.GetBlockGroupWithName("Airlock Sensors");
+            IMyBlockGroup Screens = GridTerminalSystem.GetBlockGroupWithName("Airlock Screens");
+            IMyBlockGroup Buttons = GridTerminalSystem.GetBlockGroupWithName("Airlock Buttons");
 
-            lights.GetBlocksOfType(lightList);
-            doors.GetBlocksOfType(doorList);
-            sensors.GetBlocksOfType(sensorList);
-            screens.GetBlocksOfType(screenList);
-            buttons.GetBlocksOfType(buttonList);
+            Lights.GetBlocksOfType(LightList);
+            Doors.GetBlocksOfType(DoorList);
+            Sensors.GetBlocksOfType(SensorList);
+            Screens.GetBlocksOfType(ScreenList);
+            Buttons.GetBlocksOfType(ButtonList);
 
-            spinningLight = GridTerminalSystem.GetBlockWithName("Airlock Rotating Light") as IMyReflectorLight;
+            SpinningLight = GridTerminalSystem.GetBlockWithName("Airlock Rotating Light") as IMyReflectorLight;
         }
 
         public void Save()
