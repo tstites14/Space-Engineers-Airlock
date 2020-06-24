@@ -23,6 +23,7 @@ namespace IngameScript
 {
     partial class Program : MyGridProgram
     {
+        Color NormalColor = new Color(255, 228, 206);
         Color Red = new Color(255, 0, 0);
         Color Green = new Color(0, 255, 0);
 
@@ -34,6 +35,8 @@ namespace IngameScript
 
         IMyReflectorLight SpinningLight;
         IMyAirVent Vent;
+
+        bool isCycling;
 
         public Program()
         {
@@ -57,7 +60,7 @@ namespace IngameScript
 
         public void Save()
         {
-
+            Storage = "" + isCycling;
         }
 
         public void Main(string argument, UpdateType updateSource)
@@ -99,6 +102,23 @@ namespace IngameScript
             }
 
             return false;
+        }
+
+        public void CycleAirlock()
+        {
+            ChangeLightColor(Red);
+            SpinningLight.Enabled = true;
+
+            //Enable pressurization to fill the room with oxygen
+            Vent.Depressurize = false;
+        }
+
+        public void ChangeLightColor(Color color)
+        {
+            foreach (var light in LightList)
+            {
+                light.Color = color;
+            }
         }
     }
 }
