@@ -42,7 +42,11 @@ namespace IngameScript
 
         public Program()
         {
+            //Update block every 10 ticks since running every tick is unnecessary
             Runtime.UpdateFrequency = UpdateFrequency.Update10;
+
+            //Attempt to convert value from Storage into IsCycling
+            Boolean.TryParse(Storage, out IsCycling);
 
             LightList = new List<IMyInteriorLight>();
             DoorList = new List<IMyDoor>();
@@ -100,7 +104,7 @@ namespace IngameScript
 
         public void InitialSetup()
         {
-            ChangeLightColor(Red);
+            ChangeLightProperties(Red, 0.5f);
             SpinningLight.Enabled = true;
 
             if (!AreDoorsShut())
@@ -147,6 +151,8 @@ namespace IngameScript
         {
             IsCycling = true;
 
+            //True = positive pressure
+            //False = no pressure
             if (mode)
             {
                 Vent.Depressurize = false;
@@ -157,11 +163,12 @@ namespace IngameScript
             }
         }
 
-        public void ChangeLightColor(Color color)
+        public void ChangeLightProperties(Color color, float intensity)
         {
             foreach (var light in LightList)
             {
                 light.Color = color;
+                light.Intensity = intensity;
             }
         }
     }
