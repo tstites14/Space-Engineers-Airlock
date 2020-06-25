@@ -47,6 +47,8 @@ namespace IngameScript
             LightList = new List<IMyInteriorLight>();
             DoorList = new List<IMyDoor>();
             SensorList = new List<IMySensorBlock>();
+            ScreenList = new List<IMyTextPanel>();
+            ButtonList = new List<IMyButtonPanel>();
 
             IMyBlockGroup Lights = GridTerminalSystem.GetBlockGroupWithName("Airlock Lights");
             IMyBlockGroup Doors = GridTerminalSystem.GetBlockGroupWithName("Airlock Doors");
