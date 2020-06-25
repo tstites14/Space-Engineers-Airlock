@@ -44,6 +44,10 @@ namespace IngameScript
         {
             Runtime.UpdateFrequency = UpdateFrequency.Update10;
 
+            LightList = new List<IMyInteriorLight>();
+            DoorList = new List<IMyDoor>();
+            SensorList = new List<IMySensorBlock>();
+
             IMyBlockGroup Lights = GridTerminalSystem.GetBlockGroupWithName("Airlock Lights");
             IMyBlockGroup Doors = GridTerminalSystem.GetBlockGroupWithName("Airlock Doors");
             IMyBlockGroup Sensors = GridTerminalSystem.GetBlockGroupWithName("Airlock Sensors");
