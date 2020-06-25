@@ -65,11 +65,20 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
+            defaultSetup();
+        }
+
+        public void defaultSetup()
+        {
             if (!AreDoorsShut())
             {
                 CycleDoors();
             }
+
+            ChangeLightColor(Red);
+            SpinningLight.Enabled = true;
         }
+
         public bool AreDoorsShut()
         {
             foreach (var door in DoorList)
@@ -106,9 +115,6 @@ namespace IngameScript
 
         public void CycleAirlock()
         {
-            ChangeLightColor(Red);
-            SpinningLight.Enabled = true;
-
             //Enable pressurization to fill the room with oxygen
             Vent.Depressurize = false;
         }
