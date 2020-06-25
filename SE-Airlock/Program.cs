@@ -36,7 +36,7 @@ namespace IngameScript
         IMyReflectorLight SpinningLight;
         IMyAirVent Vent;
 
-        bool isCycling;
+        bool IsCycling;
 
         public Program()
         {
@@ -60,15 +60,15 @@ namespace IngameScript
 
         public void Save()
         {
-            Storage = "" + isCycling;
+            Storage = IsCycling.ToString();
         }
 
         public void Main(string argument, UpdateType updateSource)
         {
-            defaultSetup();
+            InitialSetup();
         }
 
-        public void defaultSetup()
+        public void InitialSetup()
         {
             if (!AreDoorsShut())
             {
