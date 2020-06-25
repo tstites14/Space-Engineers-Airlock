@@ -37,7 +37,8 @@ namespace IngameScript
         IMyAirVent Vent;
 
         bool IsCycling;
-        bool PositivePressure;
+        bool IsPressurized;
+        bool VentMode;
 
         public Program()
         {
@@ -66,20 +67,29 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
-            if (IsArgumentValid(argument))
+            if (!IsArgumentValid(argument))
             {
                 Echo("Please rerun this program with the argument positive or negative");
                 return;
+            } 
+            else
+            {
+                VentMode = ArgumentToBoolean(argument);
             }
 
             InitialSetup();
 
-            CycleAirlock(argument);
+            CycleAirlock(VentMode);
         }
 
         public bool IsArgumentValid(string arg)
         {
             return arg == "" || arg == null || (arg != "positive" && arg != "negative");
+        }
+
+        public bool ArgumentToBoolean(string arg)
+        {
+            return arg == "positive";
         }
 
         public void InitialSetup()
@@ -127,20 +137,17 @@ namespace IngameScript
             return false;
         }
 
-        public void CycleAirlock(string type)
+        public void CycleAirlock(bool mode)
         {
             IsCycling = true;
 
-            switch (type)
+            if (mode)
             {
-                case "positive":
-                    Vent.Depressurize = false;
-                    PositivePressure = true;
-                    break;
-                case "negative":
-                    Vent.Depressurize = true;
-                    PositivePressure = false;
-                    break;
+                Vent.Depressurize = false;
+            }
+            else
+            {
+                Vent.Depressurize = true;
             }
         }
 
