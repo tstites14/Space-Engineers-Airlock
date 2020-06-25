@@ -37,6 +37,7 @@ namespace IngameScript
         IMyAirVent Vent;
 
         bool IsCycling;
+        bool PositivePressure;
 
         public Program()
         {
@@ -65,18 +66,31 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
+            if (IsArgumentValid(argument))
+            {
+                Echo("Please rerun this program with the argument positive or negative");
+                return;
+            }
+
             InitialSetup();
+
+            CycleAirlock(argument);
+        }
+
+        public bool IsArgumentValid(string arg)
+        {
+            return arg == "" || arg == null || (arg != "positive" && arg != "negative");
         }
 
         public void InitialSetup()
         {
+            ChangeLightColor(Red);
+            SpinningLight.Enabled = true;
+
             if (!AreDoorsShut())
             {
                 CycleDoors();
             }
-
-            ChangeLightColor(Red);
-            SpinningLight.Enabled = true;
         }
 
         public bool AreDoorsShut()
@@ -105,7 +119,7 @@ namespace IngameScript
 
         public bool IsAirlockPressurized()
         {
-            if (Vent.CanPressurize && Vent.GetOxygenLevel() < 0.0f)
+            if (Vent.CanPressurize && Vent.GetOxygenLevel() == 1.0f)
             {
                 return true;
             }
@@ -113,10 +127,21 @@ namespace IngameScript
             return false;
         }
 
-        public void CycleAirlock()
+        public void CycleAirlock(string type)
         {
-            //Enable pressurization to fill the room with oxygen
-            Vent.Depressurize = false;
+            IsCycling = true;
+
+            switch (type)
+            {
+                case "positive":
+                    Vent.Depressurize = false;
+                    PositivePressure = true;
+                    break;
+                case "negative":
+                    Vent.Depressurize = true;
+                    PositivePressure = false;
+                    break;
+            }
         }
 
         public void ChangeLightColor(Color color)
