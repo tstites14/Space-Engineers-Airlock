@@ -36,9 +36,17 @@ namespace IngameScript
         IMyReflectorLight SpinningLight;
         IMyAirVent Vent;
 
+        //Airlock is currently cycling
         bool IsCycling;
+
+        //The airlock contains oxygen
         bool IsPressurized;
+
+        //Is the airlock going to pump oxygen in or not
         bool VentMode;
+
+        //Is there a player actually in the airlock right now
+        bool PlayerInAirlock;
 
         public Program()
         {
@@ -81,15 +89,33 @@ namespace IngameScript
             {
                 Echo("Please rerun this program with the argument positive or negative");
                 return;
-            } 
+            }
             else
             {
                 VentMode = ArgumentToBoolean(argument);
             }
 
-            InitialSetup();
+            if (updateSource == UpdateType.Trigger)
+            {
+                InitialSetup();
 
-            CycleAirlock(VentMode);
+                CycleAirlock(VentMode);
+            } 
+            else
+            {
+                if (!AreDoorsShut())
+                {
+                    CycleDoors();
+                }
+            }
+
+
+            if (IsAirlockPressurized() == VentMode)
+            {
+                GetOpeningDoor().OpenDoor();
+
+
+            }
         }
 
         public bool IsArgumentValid(string arg)
@@ -104,12 +130,19 @@ namespace IngameScript
 
         public void InitialSetup()
         {
-            ChangeLightProperties(Red, 0.5f);
+            PlayerInAirlock = true;
+
+            ChangeLightProperties(Red, 0.75f);
             SpinningLight.Enabled = true;
 
             if (!AreDoorsShut())
             {
                 CycleDoors();
+            }
+
+            foreach (var sensor in SensorList)
+            {
+                sensor.Enabled = false;
             }
         }
 
@@ -135,6 +168,36 @@ namespace IngameScript
                     door.CloseDoor();
                 }
             }
+        }
+
+        public IMyDoor GetOpeningDoor()
+        {
+            return DoorList.Find(match =>
+            {
+                if (VentMode)
+                {
+                    return match.Name.Contains("Internal");
+                }
+                else
+                {
+                    return match.Name.Contains("External");
+                }
+            });
+        }
+
+        public IMySensorBlock GetOpeningSensor()
+        {
+            return SensorList.Find(match =>
+            {
+                if (VentMode)
+                {
+                    return match.Name.Contains("Exterior");
+                }
+                else
+                {
+                    return match.Name.Contains("Interior");
+                }
+            });
         }
 
         public bool IsAirlockPressurized()
