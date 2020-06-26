@@ -50,9 +50,6 @@ namespace IngameScript
 
         public Program()
         {
-            //Update block every 10 ticks since running every tick is unnecessary
-            Runtime.UpdateFrequency = UpdateFrequency.Update10;
-
             //Attempt to convert value from Storage into IsCycling
             Boolean.TryParse(Storage, out IsCycling);
 
@@ -85,31 +82,29 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
-            if (!IsArgumentValid(argument))
-            {
-                Echo("Argument provided: " + argument);
-                Echo("Please rerun this program with the argument positive or negative");
-                return;
-            }
-            else
-            {
-                VentMode = ArgumentToBoolean(argument);
-                Echo("Vent Mode: " + VentMode.ToString());
-            }
+            VentMode = ArgumentToBoolean(argument);
+            Echo("Vent Mode: " + VentMode.ToString());
             Echo("Update Type: " + updateSource.ToString());
+
             //Airlock only needs to run initial setup once so that is kept separate for optimization reasons
-            if (updateSource == UpdateType.Trigger && updateSource != UpdateType.Update10)
+            if (updateSource == UpdateType.Trigger)
             {
+                Echo("Trigger running");
                 if (!IsAirlockPressurized() == VentMode)
                 {
                     InitialSetup();
 
                     CycleAirlock(VentMode);
+
+                    //Update block every 10 ticks since running every tick is unnecessary
+                    Runtime.UpdateFrequency = UpdateFrequency.Update100;
+                    Echo(Runtime.UpdateFrequency.ToString());
                 }
             }
-            else if (updateSource == UpdateType.Update10)
+                
+            if (updateSource == UpdateType.Update100)
             {
-                Echo("UPDATE 10");
+                Echo("Update 100 running");
                 //Doors should always remain closed during either cycle, so check every time script is run
                 if (!AreDoorsShut())
                 {
@@ -122,11 +117,22 @@ namespace IngameScript
                     IsCycling = false;
                     GetOpeningDoor().OpenDoor();
 
+                    Echo("Lights fixed");
                     ChangeLightProperties(NormalColor, 2.0f);
                     SpinningLight.Enabled = false;
+                    Echo("Light spinning off");
 
+                    Echo("Sensors enabled");
                     SetSensorEnable(true);
 
+                    IMySensorBlock openingSensor = GetOpeningSensor();
+                    if (openingSensor.IsActive)
+                    {
+                        PlayerInAirlock = false;
+                    }
+
+
+                    Echo("Update frequency none");
                     Runtime.UpdateFrequency = UpdateFrequency.None;
                 }
             }
@@ -144,6 +150,7 @@ namespace IngameScript
 
         public void InitialSetup()
         {
+            Echo("InitialSetup() running");
             PlayerInAirlock = true;
 
             ChangeLightProperties(Red, 0.75f);
@@ -213,11 +220,11 @@ namespace IngameScript
             {
                 if (VentMode)
                 {
-                    return match.CustomName.Contains("Exterior");
+                    return match.CustomName.Contains("External");
                 }
                 else
                 {
-                    return match.CustomName.Contains("Interior");
+                    return match.CustomName.Contains("Internal");
                 }
             });
         }
@@ -238,6 +245,7 @@ namespace IngameScript
 
             //True = positive pressure
             //False = no pressure
+            Echo("MODE: " + mode);
             if (mode)
             {
                 Vent.Depressurize = false;
