@@ -95,26 +95,33 @@ namespace IngameScript
                 VentMode = ArgumentToBoolean(argument);
             }
 
+            //Airlock only needs to run initial setup once so that is kept separate for optimization reasons
             if (updateSource == UpdateType.Trigger)
             {
                 InitialSetup();
 
                 CycleAirlock(VentMode);
             } 
-            else
+            else if (updateSource == UpdateType.Update10)
             {
+                //Doors should always remain closed during either cycle, so check every time script is run
                 if (!AreDoorsShut())
                 {
                     CycleDoors();
                 }
-            }
 
+                if (IsAirlockPressurized() == VentMode)
+                {
+                    Echo("Airlock pressurized");
+                    GetOpeningDoor().OpenDoor();
 
-            if (IsAirlockPressurized() == VentMode)
-            {
-                GetOpeningDoor().OpenDoor();
+                    ChangeLightProperties(NormalColor, 2.0f);
+                    SpinningLight.Enabled = false;
 
+                    SetSensorEnable(true);
 
+                    Runtime.UpdateFrequency = UpdateFrequency.None;
+                }
             }
         }
 
@@ -134,15 +141,23 @@ namespace IngameScript
 
             ChangeLightProperties(Red, 0.75f);
             SpinningLight.Enabled = true;
+            Echo("Lights changed");
 
             if (!AreDoorsShut())
             {
                 CycleDoors();
+                Echo("Doors cycled");
             }
 
+            SetSensorEnable(false);
+            Echo("Sensors disabled");
+        }
+
+        public void SetSensorEnable(bool enabled)
+        {
             foreach (var sensor in SensorList)
             {
-                sensor.Enabled = false;
+                sensor.Enabled = enabled;
             }
         }
 
