@@ -90,7 +90,7 @@ namespace IngameScript
             if (updateSource == UpdateType.Trigger)
             {
                 Echo("Trigger running");
-                if (!IsAirlockPressurized() == VentMode)
+                if (!IsAirlockPressurized() == VentMode && !PlayerInAirlock)
                 {
                     InitialSetup();
 
@@ -99,6 +99,10 @@ namespace IngameScript
                     //Update block every 10 ticks since running every tick is unnecessary
                     Runtime.UpdateFrequency = UpdateFrequency.Update100;
                     Echo(Runtime.UpdateFrequency.ToString());
+                } 
+                else
+                {
+                    PlayerInAirlock = false;
                 }
             }
                 
