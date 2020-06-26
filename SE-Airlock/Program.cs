@@ -87,23 +87,29 @@ namespace IngameScript
         {
             if (!IsArgumentValid(argument))
             {
+                Echo("Argument provided: " + argument);
                 Echo("Please rerun this program with the argument positive or negative");
                 return;
             }
             else
             {
                 VentMode = ArgumentToBoolean(argument);
+                Echo("Vent Mode: " + VentMode.ToString());
             }
-
+            Echo("Update Type: " + updateSource.ToString());
             //Airlock only needs to run initial setup once so that is kept separate for optimization reasons
-            if (updateSource == UpdateType.Trigger)
+            if (updateSource == UpdateType.Trigger && updateSource != UpdateType.Update10)
             {
-                InitialSetup();
+                if (!IsAirlockPressurized() == VentMode)
+                {
+                    InitialSetup();
 
-                CycleAirlock(VentMode);
-            } 
+                    CycleAirlock(VentMode);
+                }
+            }
             else if (updateSource == UpdateType.Update10)
             {
+                Echo("UPDATE 10");
                 //Doors should always remain closed during either cycle, so check every time script is run
                 if (!AreDoorsShut())
                 {
@@ -113,6 +119,7 @@ namespace IngameScript
                 if (IsAirlockPressurized() == VentMode)
                 {
                     Echo("Airlock pressurized");
+                    IsCycling = false;
                     GetOpeningDoor().OpenDoor();
 
                     ChangeLightProperties(NormalColor, 2.0f);
@@ -191,11 +198,11 @@ namespace IngameScript
             {
                 if (VentMode)
                 {
-                    return match.CustomName.Contains("Internal");
+                    return match.CustomName.Contains("External");
                 }
                 else
                 {
-                    return match.CustomName.Contains("External");
+                    return match.CustomName.Contains("Internal");
                 }
             });
         }
@@ -234,10 +241,12 @@ namespace IngameScript
             if (mode)
             {
                 Vent.Depressurize = false;
+                Echo("Room Pressurizing");
             }
             else
             {
                 Vent.Depressurize = true;
+                Echo("Room Depressurizing");
             }
         }
 
