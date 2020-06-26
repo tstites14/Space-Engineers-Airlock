@@ -30,46 +30,23 @@ namespace IngameScript
         List<IMyInteriorLight> LightList;
         List<IMyDoor> DoorList;
         List<IMySensorBlock> SensorList;
-        List<IMyTextPanel> ScreenList;
-        List<IMyButtonPanel> ButtonList;
 
         IMyReflectorLight SpinningLight;
         IMyAirVent Vent;
 
-        //Airlock is currently cycling
-        bool IsCycling;
-
-        //The airlock contains oxygen
-        bool IsPressurized;
-
-        //Is the airlock going to pump oxygen in or not
-        bool VentMode;
-
-        //Is there a player actually in the airlock right now
-        bool PlayerInAirlock;
-
         public Program()
         {
-            //Attempt to convert value from Storage into IsCycling
-            Boolean.TryParse(Storage, out IsCycling);
-
             LightList = new List<IMyInteriorLight>();
             DoorList = new List<IMyDoor>();
             SensorList = new List<IMySensorBlock>();
-            ScreenList = new List<IMyTextPanel>();
-            ButtonList = new List<IMyButtonPanel>();
 
             IMyBlockGroup Lights = GridTerminalSystem.GetBlockGroupWithName("Airlock Lights");
             IMyBlockGroup Doors = GridTerminalSystem.GetBlockGroupWithName("Airlock Doors");
             IMyBlockGroup Sensors = GridTerminalSystem.GetBlockGroupWithName("Airlock Sensors");
-            IMyBlockGroup Screens = GridTerminalSystem.GetBlockGroupWithName("Airlock Screens");
-            IMyBlockGroup Buttons = GridTerminalSystem.GetBlockGroupWithName("Airlock Buttons");
 
             Lights.GetBlocksOfType(LightList);
             Doors.GetBlocksOfType(DoorList);
             Sensors.GetBlocksOfType(SensorList);
-            Screens.GetBlocksOfType(ScreenList);
-            Buttons.GetBlocksOfType(ButtonList);
 
             SpinningLight = GridTerminalSystem.GetBlockWithName("Airlock Rotating Light") as IMyReflectorLight;
             Vent = GridTerminalSystem.GetBlockWithName("Airlock Vent") as IMyAirVent;
@@ -77,189 +54,51 @@ namespace IngameScript
 
         public void Save()
         {
-            Storage = IsCycling.ToString();
+             //stubbed
         }
 
         public void Main(string argument, UpdateType updateSource)
         {
-            VentMode = ArgumentToBoolean(argument);
-            Echo("Vent Mode: " + VentMode.ToString());
-            Echo("Update Type: " + updateSource.ToString());
-
-            //Airlock only needs to run initial setup once so that is kept separate for optimization reasons
-            if (updateSource == UpdateType.Trigger)
-            {
-                Echo("Trigger running");
-                if (!IsAirlockPressurized() == VentMode && !PlayerInAirlock)
-                {
-                    InitialSetup();
-
-                    CycleAirlock(VentMode);
-
-                    //Update block every 10 ticks since running every tick is unnecessary
-                    Runtime.UpdateFrequency = UpdateFrequency.Update100;
-                    Echo(Runtime.UpdateFrequency.ToString());
-                } 
-                else
-                {
-                    PlayerInAirlock = false;
-                }
-            }
-                
-            if (updateSource == UpdateType.Update100)
-            {
-                Echo("Update 100 running");
-                //Doors should always remain closed during either cycle, so check every time script is run
-                if (!AreDoorsShut())
-                {
-                    CycleDoors();
-                }
-
-                if (IsAirlockPressurized() == VentMode)
-                {
-                    Echo("Airlock pressurized");
-                    IsCycling = false;
-                    GetOpeningDoor().OpenDoor();
-
-                    Echo("Lights fixed");
-                    ChangeLightProperties(NormalColor, 2.0f);
-                    SpinningLight.Enabled = false;
-                    Echo("Light spinning off");
-
-                    Echo("Sensors enabled");
-                    SetSensorEnable(true);
-
-                    IMySensorBlock openingSensor = GetOpeningSensor();
-                    if (openingSensor.IsActive)
-                    {
-                        PlayerInAirlock = false;
-                    }
-
-
-                    Echo("Update frequency none");
-                    Runtime.UpdateFrequency = UpdateFrequency.None;
-                }
-            }
+            //stubbed
         }
 
-        public bool IsArgumentValid(string arg)
+        public void Calibration()
         {
-            return arg == "" || arg == null || (arg != "positive" && arg != "negative");
-        }
-
-        public bool ArgumentToBoolean(string arg)
-        {
-            return arg == "positive";
-        }
-
-        public void InitialSetup()
-        {
-            Echo("InitialSetup() running");
-            PlayerInAirlock = true;
-
-            ChangeLightProperties(Red, 0.75f);
-            SpinningLight.Enabled = true;
-            Echo("Lights changed");
-
-            if (!AreDoorsShut())
-            {
-                CycleDoors();
-                Echo("Doors cycled");
-            }
-
-            SetSensorEnable(false);
-            Echo("Sensors disabled");
-        }
-
-        public void SetSensorEnable(bool enabled)
-        {
-            foreach (var sensor in SensorList)
-            {
-                sensor.Enabled = enabled;
-            }
+            //stubbed
         }
 
         public bool AreDoorsShut()
         {
-            foreach (var door in DoorList)
-            {
-                if (door.Status != DoorStatus.Closed)
-                {
-                    return false;
-                }
-            }
-
-            return true;
+            //stubbed
+            return false;
         }
 
-        public void CycleDoors()
+        public void CloseDoors()
         {
-            foreach (var door in DoorList)
-            {
-                if (door.Status == DoorStatus.Open || door.Status == DoorStatus.Opening)
-                {
-                    door.CloseDoor();
-                }
-            }
+            //stubbed
         }
 
-        public IMyDoor GetOpeningDoor()
+        public IMyDoor GetOppositeDoor()
         {
-            return DoorList.Find(match =>
-            {
-                if (VentMode)
-                {
-                    return match.CustomName.Contains("External");
-                }
-                else
-                {
-                    return match.CustomName.Contains("Internal");
-                }
-            });
+            //stubbed
+            return null;
         }
 
-        public IMySensorBlock GetOpeningSensor()
+        public IMySensorBlock GetOppositeSensor()
         {
-            return SensorList.Find(match =>
-            {
-                if (VentMode)
-                {
-                    return match.CustomName.Contains("External");
-                }
-                else
-                {
-                    return match.CustomName.Contains("Internal");
-                }
-            });
+            //stubbed
+            return null;
         }
 
         public bool IsAirlockPressurized()
         {
-            if (Vent.CanPressurize && Vent.GetOxygenLevel() == 1.0f)
-            {
-                return true;
-            }
-
+            //stubbed
             return false;
         }
 
-        public void CycleAirlock(bool mode)
+        public void CycleAirlock()
         {
-            IsCycling = true;
-
-            //True = positive pressure
-            //False = no pressure
-            Echo("MODE: " + mode);
-            if (mode)
-            {
-                Vent.Depressurize = false;
-                Echo("Room Pressurizing");
-            }
-            else
-            {
-                Vent.Depressurize = true;
-                Echo("Room Depressurizing");
-            }
+            //stubbed
         }
 
         public void ChangeLightProperties(Color color, float intensity)
