@@ -191,11 +191,11 @@ namespace IngameScript
             {
                 if (VentMode)
                 {
-                    return match.Name.Contains("Internal");
+                    return match.CustomName.Contains("Internal");
                 }
                 else
                 {
-                    return match.Name.Contains("External");
+                    return match.CustomName.Contains("External");
                 }
             });
         }
@@ -206,11 +206,11 @@ namespace IngameScript
             {
                 if (VentMode)
                 {
-                    return match.Name.Contains("Exterior");
+                    return match.CustomName.Contains("Exterior");
                 }
                 else
                 {
-                    return match.Name.Contains("Interior");
+                    return match.CustomName.Contains("Interior");
                 }
             });
         }
