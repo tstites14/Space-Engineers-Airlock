@@ -101,9 +101,18 @@ namespace IngameScript
                 //This allows the script to execute every 200 ticks instead of the stock 100
                 Update100Runs++;
 
-                if (Update100Runs % 2 == 0)
+                if (Update100Runs % 3 == 0)
                 {
                     Echo("i-runs: " + Update100Runs.ToString());
+
+                    ChangeLightProperties(Green, 0.85f);
+                    SpinningLight.Enabled = false;
+
+                    IMyDoor oppositeDoor = GetOppositeDoor();
+                    oppositeDoor.OpenDoor();
+                    Echo($"{oppositeDoor.CustomName} opened");
+
+                    Runtime.UpdateFrequency = UpdateFrequency.None;
                 }
             }
         }
@@ -139,6 +148,14 @@ namespace IngameScript
             }
 
             //TODO: LCD screen setup
+        }
+
+        public IMyDoor GetOppositeDoor()
+        {
+            List<IMyDoor> tempList = new List<IMyDoor>(DoorList);
+            tempList.Remove(ActivatedDoor);
+            
+            return tempList[0];
         }
 
         public bool AreDoorsShut()
