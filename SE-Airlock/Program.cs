@@ -70,12 +70,20 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
-            
+            Calibration();
         }
 
         public void Calibration()
         {
+            foreach (var door in DoorList)
+            {
+                if (door.Status != DoorStatus.Closed)
+                {
+                    door.CloseDoor();
+                }
+            }
 
+            //TODO: LCD screen setup
         }
 
         public bool AreDoorsShut()
