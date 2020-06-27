@@ -35,6 +35,7 @@ namespace IngameScript
         IMyReflectorLight SpinningLight;
         IMyAirVent Vent;
         IMySensorBlock ActivatedSensor;
+        IMySensorBlock OppositeSensor;
         IMyDoor ActivatedDoor;
 
         int Update100Runs = 1;
@@ -70,7 +71,7 @@ namespace IngameScript
         public void Main(string argument, UpdateType updateSource)
         {
             string pressurizationType;
-
+            
             if (updateSource == UpdateType.Trigger)
             {
                 //Determine which side the user is entering and ensure all doors are closed
@@ -82,13 +83,15 @@ namespace IngameScript
                 SpinningLight.Enabled = true;
                 Echo("Lights modified");
 
+                OppositeSensor.Enabled = false;
+
                 //Change the room pressure based on which sensor was tripped
-                if (int.Parse(pressurizationType) == (int) PressureStates.Positive)
+                if (int.Parse(pressurizationType) == (int)PressureStates.Positive)
                 {
                     Vent.Depressurize = false;
                     Echo("Room pressurizing");
                 }
-                else if (int.Parse(pressurizationType) == (int) PressureStates.Negative)
+                else if (int.Parse(pressurizationType) == (int)PressureStates.Negative)
                 {
                     Vent.Depressurize = true;
                     Echo("Room depressurizing");
@@ -113,6 +116,11 @@ namespace IngameScript
                     IMyDoor oppositeDoor = GetOppositeDoor();
                     oppositeDoor.OpenDoor();
                     Echo($"{oppositeDoor.CustomName} opened");
+                }
+                else if (Update100Runs % 6 == 0)
+                {
+                    ChangeLightProperties(NormalColor, 1.5f);
+                    OppositeSensor.Enabled = true;
 
                     //The script doesn't need to run anymore so disable further runs
                     Runtime.UpdateFrequency = UpdateFrequency.None;
@@ -138,6 +146,11 @@ namespace IngameScript
             ActivatedDoor = DoorList.Find(match =>
             {
                 return match.Status == DoorStatus.Open;
+            });
+            //Determine which sensor is the one not active
+            OppositeSensor = SensorList.Find(match =>
+            {
+                return !match.IsActive;
             });
 
             //Close all doors to prepare for airlock cycle
