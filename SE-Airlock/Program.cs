@@ -78,6 +78,20 @@ namespace IngameScript
             {
                 Calibration();
                 pressurizationType = ActivatedSensor.CustomData;
+
+                ChangeLightProperties(Red, 0.75f);
+                SpinningLight.Enabled = true;
+
+                if (int.Parse(pressurizationType) == (int) PressureStates.Positive)
+                {
+                    Vent.Depressurize = false;
+                    Echo("Room pressurizing");
+                }
+                else if (int.Parse(pressurizationType) == (int) PressureStates.Negative)
+                {
+                    Vent.Depressurize = true;
+                    Echo("Room depressurizing");
+                }
             }
         }
 
@@ -103,6 +117,7 @@ namespace IngameScript
                 if (door.Status != DoorStatus.Closed)
                 {
                     door.CloseDoor();
+                    Echo($"{door.CustomName} closed");
                 }
             }
 
@@ -115,20 +130,10 @@ namespace IngameScript
             return false;
         }
 
-        public void CloseDoors()
-        {
-            //stubbed
-        }
-
         public bool IsAirlockPressurized()
         {
             //stubbed
             return false;
-        }
-
-        public void CycleAirlock()
-        {
-            //stubbed
         }
 
         public void ChangeLightProperties(Color color, float intensity)
