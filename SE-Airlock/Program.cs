@@ -117,10 +117,11 @@ namespace IngameScript
                     oppositeDoor.OpenDoor();
                     Echo($"{oppositeDoor.CustomName} opened");
                 }
-                else if (Update100Runs % 6 == 0)
+                else if (Update100Runs % 7 == 0)
                 {
                     ChangeLightProperties(NormalColor, 1.5f);
                     OppositeSensor.Enabled = true;
+                    Echo("Reset to beginning");
 
                     //The script doesn't need to run anymore so disable further runs
                     Runtime.UpdateFrequency = UpdateFrequency.None;
