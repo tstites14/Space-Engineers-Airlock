@@ -98,20 +98,23 @@ namespace IngameScript
             }
             else if (updateSource == UpdateType.Update100)
             {
-                //This allows the script to execute every 200 ticks instead of the stock 100
+                //This allows the script to execute every 300 ticks instead of the stock 100
                 Update100Runs++;
 
                 if (Update100Runs % 3 == 0)
                 {
                     Echo("i-runs: " + Update100Runs.ToString());
 
+                    //Change the lights to green to indicate it is finished cycling
                     ChangeLightProperties(Green, 0.85f);
                     SpinningLight.Enabled = false;
 
+                    //Open the door on the other side to allow exit
                     IMyDoor oppositeDoor = GetOppositeDoor();
                     oppositeDoor.OpenDoor();
                     Echo($"{oppositeDoor.CustomName} opened");
 
+                    //The script doesn't need to run anymore so disable further runs
                     Runtime.UpdateFrequency = UpdateFrequency.None;
                 }
             }
