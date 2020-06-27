@@ -63,15 +63,6 @@ namespace IngameScript
             Vent = GridTerminalSystem.GetBlockWithName("Airlock Vent") as IMyAirVent;
             if (Vent == null)
                 Echo("Cannot find air vent");
-            
-            ActivatedSensor = SensorList.Find(match => 
-            {
-                return match.IsActive;
-            });
-            ActivatedDoor = DoorList.Find(match =>
-            {
-                return match.Status == DoorStatus.Open;
-            });
         }
 
         public void Save()
@@ -81,9 +72,13 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
-            Calibration();
+            string pressurizationType;
 
-            string pressurizationType = ActivatedSensor.CustomData;
+            if (updateSource == UpdateType.Trigger)
+            {
+                Calibration();
+                pressurizationType = ActivatedSensor.CustomData;
+            }
         }
 
         public enum PressureStates
@@ -94,6 +89,15 @@ namespace IngameScript
 
         public void Calibration()
         {
+            ActivatedSensor = SensorList.Find(match =>
+            {
+                return match.IsActive;
+            });
+            ActivatedDoor = DoorList.Find(match =>
+            {
+                return match.Status == DoorStatus.Open;
+            });
+
             foreach (var door in DoorList)
             {
                 if (door.Status != DoorStatus.Closed)
