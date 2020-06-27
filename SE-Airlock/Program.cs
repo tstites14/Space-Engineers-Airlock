@@ -76,12 +76,16 @@ namespace IngameScript
 
             if (updateSource == UpdateType.Trigger)
             {
+                //Determine which side the user is entering and ensure all doors are closed
                 Calibration();
                 pressurizationType = ActivatedSensor.CustomData;
 
+                //Adjust lighting to show that the room is undergoing a pressure change
                 ChangeLightProperties(Red, 0.75f);
                 SpinningLight.Enabled = true;
+                Echo("Lights modified");
 
+                //Change the room pressure based on which sensor was tripped
                 if (int.Parse(pressurizationType) == (int) PressureStates.Positive)
                 {
                     Vent.Depressurize = false;
@@ -103,15 +107,19 @@ namespace IngameScript
 
         public void Calibration()
         {
+            //Find which direction the user is entering by checking
+            //which sensor is detecting the user
             ActivatedSensor = SensorList.Find(match =>
             {
                 return match.IsActive;
             });
+            //Find which door the user entered by checking which door is open
             ActivatedDoor = DoorList.Find(match =>
             {
                 return match.Status == DoorStatus.Open;
             });
 
+            //Close all doors to prepare for airlock cycle
             foreach (var door in DoorList)
             {
                 if (door.Status != DoorStatus.Closed)
