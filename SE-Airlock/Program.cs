@@ -44,15 +44,25 @@ namespace IngameScript
             SensorList = new List<IMySensorBlock>();
 
             IMyBlockGroup Lights = GridTerminalSystem.GetBlockGroupWithName("Airlock Lights");
+            if (Lights == null)
+                Echo("Cannot find light group");
             IMyBlockGroup Doors = GridTerminalSystem.GetBlockGroupWithName("Airlock Doors");
+            if (Doors == null)
+                Echo("Cannot find door group");
             IMyBlockGroup Sensors = GridTerminalSystem.GetBlockGroupWithName("Airlock Sensors");
+            if (Sensors == null)
+                Echo("Cannot find sensor group");
 
             Lights.GetBlocksOfType(LightList);
             Doors.GetBlocksOfType(DoorList);
             Sensors.GetBlocksOfType(SensorList);
 
             SpinningLight = GridTerminalSystem.GetBlockWithName("Airlock Rotating Light") as IMyReflectorLight;
+            if (SpinningLight == null)
+                Echo("Cannot find spinning light");
             Vent = GridTerminalSystem.GetBlockWithName("Airlock Vent") as IMyAirVent;
+            if (Vent == null)
+                Echo("Cannot find air vent");
             
             ActivatedSensor = SensorList.Find(match => 
             {
