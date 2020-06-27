@@ -33,6 +33,8 @@ namespace IngameScript
 
         IMyReflectorLight SpinningLight;
         IMyAirVent Vent;
+        IMySensorBlock ActivatedSensor;
+        IMyDoor ActivatedDoor;
 
         public Program()
         {
@@ -50,6 +52,15 @@ namespace IngameScript
 
             SpinningLight = GridTerminalSystem.GetBlockWithName("Airlock Rotating Light") as IMyReflectorLight;
             Vent = GridTerminalSystem.GetBlockWithName("Airlock Vent") as IMyAirVent;
+            
+            ActivatedSensor = SensorList.Find(match => 
+            {
+                return match.IsActive;
+            });
+            ActivatedDoor = DoorList.Find(match =>
+            {
+                return match.Status == DoorStatus.Open;
+            });
         }
 
         public void Save()
@@ -59,12 +70,12 @@ namespace IngameScript
 
         public void Main(string argument, UpdateType updateSource)
         {
-            //stubbed
+            
         }
 
         public void Calibration()
         {
-            //stubbed
+
         }
 
         public bool AreDoorsShut()
