@@ -37,6 +37,8 @@ namespace IngameScript
         IMySensorBlock ActivatedSensor;
         IMyDoor ActivatedDoor;
 
+        int Update100Runs = 1;
+
         public Program()
         {
             LightList = new List<IMyInteriorLight>();
@@ -65,11 +67,6 @@ namespace IngameScript
                 Echo("Cannot find air vent");
         }
 
-        public void Save()
-        {
-             //stubbed
-        }
-
         public void Main(string argument, UpdateType updateSource)
         {
             string pressurizationType;
@@ -95,6 +92,18 @@ namespace IngameScript
                 {
                     Vent.Depressurize = true;
                     Echo("Room depressurizing");
+                }
+
+                Runtime.UpdateFrequency = UpdateFrequency.Update100;
+            }
+            else if (updateSource == UpdateType.Update100)
+            {
+                //This allows the script to execute every 200 ticks instead of the stock 100
+                Update100Runs++;
+
+                if (Update100Runs % 2 == 0)
+                {
+                    Echo("i-runs: " + Update100Runs.ToString());
                 }
             }
         }
