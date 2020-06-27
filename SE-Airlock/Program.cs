@@ -18,6 +18,7 @@ using VRage;
 using VRageMath;
 using Sandbox.Game.GameSystems;
 using VRageRender;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
 namespace IngameScript
 {
@@ -71,6 +72,14 @@ namespace IngameScript
         public void Main(string argument, UpdateType updateSource)
         {
             Calibration();
+
+            string pressurizationType = ActivatedSensor.CustomData;
+        }
+
+        public enum PressureStates
+        {
+            Negative,
+            Positive
         }
 
         public void Calibration()
@@ -95,18 +104,6 @@ namespace IngameScript
         public void CloseDoors()
         {
             //stubbed
-        }
-
-        public IMyDoor GetOppositeDoor()
-        {
-            //stubbed
-            return null;
-        }
-
-        public IMySensorBlock GetOppositeSensor()
-        {
-            //stubbed
-            return null;
         }
 
         public bool IsAirlockPressurized()
