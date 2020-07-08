@@ -124,13 +124,14 @@ namespace IngameScript
                         Echo($"{oppositeDoor.CustomName} opened");
 
                         FinishedCycle = true;
+                        Update100Runs = 0;
                     }
                     else
                     {
                         Echo("ERROR");
                     }
                 }
-                else if (FinishedCycle)
+                else if (Update100Runs % 5 == 0 && FinishedCycle)
                 {
                     changeLightProperties(NormalColor, 1.5f);
                     OppositeSensor.Enabled = true;
@@ -214,7 +215,7 @@ namespace IngameScript
             {
                 return false;
             }
-            else if (state == PressureStates.Negative && oxygen != 0.0f)
+            else if (state == PressureStates.Negative && oxygen < 0.000000006f)
             {
                 return false;
             }
