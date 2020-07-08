@@ -75,12 +75,12 @@ namespace IngameScript
             if (updateSource == UpdateType.Trigger)
             {
                 //Determine which side the user is entering and ensure all doors are closed
-                Calibration();
+                calibration();
                 pressurizationType = ActivatedSensor.CustomData;
-                PressureStates state = GetRequestedPressure(pressurizationType);
+                PressureStates state = getRequestedPressure(pressurizationType);
 
                 //Adjust lighting to show that the room is undergoing a pressure change
-                ChangeLightProperties(Red, 0.75f);
+                changeLightProperties(Red, 0.75f);
                 SpinningLight.Enabled = true;
                 Echo("Lights modified");
 
@@ -110,17 +110,17 @@ namespace IngameScript
                     Echo("i-runs: " + Update100Runs.ToString());
 
                     //Change the lights to green to indicate it is finished cycling
-                    ChangeLightProperties(Green, 0.85f);
+                    changeLightProperties(Green, 0.85f);
                     SpinningLight.Enabled = false;
 
                     //Open the door on the other side to allow exit
-                    IMyDoor oppositeDoor = GetOppositeDoor();
+                    IMyDoor oppositeDoor = getOppositeDoor();
                     oppositeDoor.OpenDoor();
                     Echo($"{oppositeDoor.CustomName} opened");
                 }
                 else if (Update100Runs % 7 == 0)
                 {
-                    ChangeLightProperties(NormalColor, 1.5f);
+                    changeLightProperties(NormalColor, 1.5f);
                     OppositeSensor.Enabled = true;
                     Echo("Reset to beginning");
 
@@ -136,7 +136,7 @@ namespace IngameScript
             Positive
         }
 
-        public void Calibration()
+        public void calibration()
         {
             //Find which direction the user is entering by checking
             //which sensor is detecting the user
@@ -168,7 +168,7 @@ namespace IngameScript
             //TODO: LCD screen setup
         }
 
-        public IMyDoor GetOppositeDoor()
+        public IMyDoor getOppositeDoor()
         {
             List<IMyDoor> tempList = new List<IMyDoor>(DoorList);
             tempList.Remove(ActivatedDoor);
@@ -176,7 +176,7 @@ namespace IngameScript
             return tempList[0];
         }
 
-        public PressureStates GetRequestedPressure(string type)
+        public PressureStates getRequestedPressure(string type)
         {
             if (int.Parse(type) == (int)PressureStates.Positive)
             {
@@ -190,19 +190,13 @@ namespace IngameScript
             return PressureStates.Negative;
         }
 
-        public bool AreDoorsShut()
+        public bool isAirlockPressurized()
         {
             //stubbed
             return false;
         }
 
-        public bool IsAirlockPressurized()
-        {
-            //stubbed
-            return false;
-        }
-
-        public void ChangeLightProperties(Color color, float intensity)
+        public void changeLightProperties(Color color, float intensity)
         {
             foreach (var light in LightList)
             {
