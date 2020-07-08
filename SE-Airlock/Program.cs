@@ -77,6 +77,7 @@ namespace IngameScript
                 //Determine which side the user is entering and ensure all doors are closed
                 Calibration();
                 pressurizationType = ActivatedSensor.CustomData;
+                PressureStates state = GetRequestedPressure(pressurizationType);
 
                 //Adjust lighting to show that the room is undergoing a pressure change
                 ChangeLightProperties(Red, 0.75f);
@@ -86,12 +87,12 @@ namespace IngameScript
                 OppositeSensor.Enabled = false;
 
                 //Change the room pressure based on which sensor was tripped
-                if (int.Parse(pressurizationType) == (int)PressureStates.Positive)
+                if (state == PressureStates.Positive)
                 {
                     Vent.Depressurize = false;
                     Echo("Room pressurizing");
                 }
-                else if (int.Parse(pressurizationType) == (int)PressureStates.Negative)
+                else if (state == PressureStates.Negative)
                 {
                     Vent.Depressurize = true;
                     Echo("Room depressurizing");
@@ -173,6 +174,20 @@ namespace IngameScript
             tempList.Remove(ActivatedDoor);
             
             return tempList[0];
+        }
+
+        public PressureStates GetRequestedPressure(string type)
+        {
+            if (int.Parse(type) == (int)PressureStates.Positive)
+            {
+                return PressureStates.Positive;
+            }
+            else if (int.Parse(type) == (int)PressureStates.Negative)
+            {
+                return PressureStates.Negative;
+            }
+
+            return PressureStates.Negative;
         }
 
         public bool AreDoorsShut()
