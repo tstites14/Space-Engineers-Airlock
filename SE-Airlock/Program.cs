@@ -39,6 +39,7 @@ namespace IngameScript
         IMyDoor ActivatedDoor;
 
         int Update100Runs = 1;
+        bool FinishedCycle = false;
         PressureStates state;
 
         public Program()
@@ -105,8 +106,9 @@ namespace IngameScript
             {
                 //This allows the script to execute every 300 ticks instead of the stock 100
                 Update100Runs++;
+                Echo(FinishedCycle.ToString());
 
-                if (Update100Runs % 3 == 0)
+                if (Update100Runs % 3 == 0 && !FinishedCycle)
                 {
                     Echo("i-runs: " + Update100Runs.ToString());
 
@@ -120,13 +122,15 @@ namespace IngameScript
                         IMyDoor oppositeDoor = getOppositeDoor();
                         oppositeDoor.OpenDoor();
                         Echo($"{oppositeDoor.CustomName} opened");
+
+                        FinishedCycle = true;
                     }
                     else
                     {
                         Echo("ERROR");
                     }
                 }
-                else if (Update100Runs % 7 == 0)
+                else if (FinishedCycle)
                 {
                     changeLightProperties(NormalColor, 1.5f);
                     OppositeSensor.Enabled = true;
@@ -148,6 +152,8 @@ namespace IngameScript
 
         public void calibration()
         {
+            FinishedCycle = false;
+
             //Find which direction the user is entering by checking
             //which sensor is detecting the user
             ActivatedSensor = SensorList.Find(match =>
