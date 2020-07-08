@@ -39,6 +39,7 @@ namespace IngameScript
         IMyDoor ActivatedDoor;
 
         int Update100Runs = 1;
+        PressureStates state;
 
         public Program()
         {
@@ -77,7 +78,7 @@ namespace IngameScript
                 //Determine which side the user is entering and ensure all doors are closed
                 calibration();
                 pressurizationType = ActivatedSensor.CustomData;
-                PressureStates state = getRequestedPressure(pressurizationType);
+                state = getRequestedPressure(pressurizationType);
 
                 //Adjust lighting to show that the room is undergoing a pressure change
                 changeLightProperties(Red, 0.75f);
@@ -109,14 +110,21 @@ namespace IngameScript
                 {
                     Echo("i-runs: " + Update100Runs.ToString());
 
-                    //Change the lights to green to indicate it is finished cycling
-                    changeLightProperties(Green, 0.85f);
-                    SpinningLight.Enabled = false;
+                    if (isAirlockPressurized(state))
+                    {
+                        //Change the lights to green to indicate it is finished cycling
+                        changeLightProperties(Green, 0.85f);
+                        SpinningLight.Enabled = false;
 
-                    //Open the door on the other side to allow exit
-                    IMyDoor oppositeDoor = getOppositeDoor();
-                    oppositeDoor.OpenDoor();
-                    Echo($"{oppositeDoor.CustomName} opened");
+                        //Open the door on the other side to allow exit
+                        IMyDoor oppositeDoor = getOppositeDoor();
+                        oppositeDoor.OpenDoor();
+                        Echo($"{oppositeDoor.CustomName} opened");
+                    }
+                    else
+                    {
+                        Echo("ERROR");
+                    }
                 }
                 else if (Update100Runs % 7 == 0)
                 {
@@ -126,6 +134,8 @@ namespace IngameScript
 
                     //The script doesn't need to run anymore so disable further runs
                     Runtime.UpdateFrequency = UpdateFrequency.None;
+
+                    Update100Runs = 0;
                 }
             }
         }
@@ -190,10 +200,20 @@ namespace IngameScript
             return PressureStates.Negative;
         }
 
-        public bool isAirlockPressurized()
+        public bool isAirlockPressurized(PressureStates state)
         {
-            //stubbed
-            return false;
+            float oxygen = Vent.GetOxygenLevel();
+
+            if (state == PressureStates.Positive && oxygen != 1.0f)
+            {
+                return false;
+            }
+            else if (state == PressureStates.Negative && oxygen != 0.0f)
+            {
+                return false;
+            }
+
+            return true;
         }
 
         public void changeLightProperties(Color color, float intensity)
