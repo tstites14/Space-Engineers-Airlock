@@ -215,7 +215,7 @@ namespace IngameScript
             {
                 return false;
             }
-            else if (state == PressureStates.Negative && oxygen < 0.000000006f)
+            else if (state == PressureStates.Negative && oxygen > 0.000000006f)
             {
                 return false;
             }
